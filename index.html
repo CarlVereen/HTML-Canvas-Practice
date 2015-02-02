@@ -12,23 +12,49 @@
 
   </head>
   <body>
-      <canvas id="c" width="200" height="200">
+      <canvas id="c" width="500" height="500">
          
       </canvas>
       <script type="text/javascript">
          var c = document.querySelector("#c");
          var ctx = c.getContext("2d");
+         var sqSides = [
+         {"x": 150, "y": 50},
+         {"x": 150, "y": 150},
+         {"x": 50, "y": 150},
+         {"x": 50, "y": 50 }];
+         var trSides = [
+         {"x": 125, "y": 75},
+         {"x": 125, "y": 125},
+         {"x": 75, "y": 75}
+        ];
+              
 
-         var image = new Image();
+         function sqDraw(){
+          ctx.beginPath();
+          ctx.moveTo(50,50);
+          for (var i in sqSides) {
+            ctx.lineTo(sqSides[i].x, sqSides[i].y);
+          };
+          ctx.stroke();
+         console.log("finished Drawing")
+        };
+         
+         function trDraw(){
+          ctx.beginPath();
+          ctx.moveTo(trSides[2].x,trSides[2].y);
+          for (var i in trSides) {
+            ctx.lineTo(trSides[i].x, trSides[i].y);
+          };
+          ctx.fill();
+         };
 
-         image.onload = function() {
-            console.log("Loaded image");
-            ctx.drawImage(image, 0, 0, c.width, c.height);
-            var savedImage = c.toDataURL();
-            window.open(savedImage);
-         }
+         trDraw();
+         sqDraw();
 
-         image.src = "fry_fixed.jpg";
+
+
+
 
       </script>
 
