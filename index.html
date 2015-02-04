@@ -1,46 +1,113 @@
-<!Doctype html>
-
+<<!DOCTYPE html>
+ 
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Meme Generator">
-    <meta name="keywords" content="Meme">
-    <meta name="author" content="Carl Vereen">
-    <meta name="viewport" content="width=device-width">
-    <title>My Meme Generator</title>
-
-
-  </head>
-  <body>
+<head>
+  <title>MemeMaker-Simple</title>
+  <meta charset="UTF-8">
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <style>
+    #image-container {
+      display: flex;
+    }
+  </style>
+</head>
+ 
+<body>
+ 
+  <div>
+    <input type="file" id="file" />  
+  </div>
+  <div id="image-container">
+    <canvas width="500" height="500"></canvas>
     <div>
-      <h1> My Meme</h1>
+      <span>Top Line:</span><br/>
+      <input id="topLineText" type="text"><br/>
+      <span>Bottom Line:</span><br/>
+      <input id="bottomLineText" type="text"><br/>
+      <button id="saveBtn">Save</button>
     </div>
-      <canvas id="c" width="500" height="500">
-         
-      </canvas>
-      <script type="text/javascript">
-         var c = document.querySelector("#c");
-         var ctx = c.getContext("2d");
-         
-         ctx.font = "normal 36pt Impact";
-         ctx.fillStyle = "white";
-         ctx.lineWidth = 3;
-         ctx.fillText("CANVAS MEMES!", 50, 100);
-         ctx.strokeText("CANVAS MEMES!", 50, 100);
+  </div>
+  <script>
+    function textChangeListener (evt) {
+      var id = evt.target.id;
+      var text = evt.target.value;
+      
+      if (id == "topLineText") {
+        window.topLineText = text;
+      } else {
+        window.bottomLineText = text;
+      }
+      
+      redrawMeme(window.imageSrc, window.topLineText, window.bottomLineText);
+    }
+    
+    function redrawMeme(image, topLine, bottomLine) {
+      // Get Canvas2DContext
+      var canvas = document.querySelector('canvas');
+      var ctx = canvas.getContext("2d");
+      if (image!= null)
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      
+      //text attributes
+      ctx.font = "36pt Impact";
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center"
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "black";
+      
+      if (topLine != null){
+        ctx.fillText(topLine, canvas.width/2, 40);
+        ctx.strokeText(topLine, canvas.width/2, 40);
+      }
+      if (bottomLine != null){
+      ctx.fillText(bottomLine, canvas.width/2, canvas.height-20);
+      ctx.strokeText(bottomLine, canvas.width/2, canvas.height-20);
+      }
+    }
+    
+    function saveFile() {
+      window.open(document.querySelector('canvas').toDataURL());
+    }
+    
 
-
-
-
-
-      </script>
-
-
-
-
-  </body>
-
-
-
-
-
+    function handleFileSelect(evt) {
+      var canvasWidth = 500;
+      var canvasHeight = 500;
+      var file = evt.target.files[0];
+      
+      
+      
+      var reader = new FileReader();
+      reader.onload = function(fileObject) {
+        var data = fileObject.target.result;
+        
+        // Create an image object
+        var image = new Image();
+        image.onload = function() {
+          
+          window.imageSrc = this;
+          redrawMeme(window.imageSrc, null, null);
+        }
+        
+        // Set image data to background image.
+        image.src = data;
+        console.log(fileObject.target.result);
+      };
+      reader.readAsDataURL(file)
+    }
+    
+    window.topLineText = "";
+    window.bottomLineText = "";
+    var input1 = document.getElementById('topLineText');
+    var input2 = document.getElementById('bottomLineText');
+    input1.oninput = textChangeListener;
+    input2.oninput = textChangeListener;
+    document.getElementById('file').addEventListener('change', handleFileSelect, false);
+    document.querySelector('button').addEventListener('click', saveFile, false);
+  </script>
+ 
+</body>
 </html>
