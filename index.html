@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
  
 <html>
 <head>
@@ -17,96 +17,40 @@
  
 <body>
  
-  <div>
-    <input type="file" id="file" />  
-  </div>
-  <div id="image-container">
+  <div id="canvas">
     <canvas width="500" height="500"></canvas>
-    <div>
-      <span>Top Line:</span><br/>
-      <input id="topLineText" type="text"><br/>
-      <span>Bottom Line:</span><br/>
-      <input id="bottomLineText" type="text"><br/>
-      <button id="saveBtn">Save</button>
-    </div>
+    
   </div>
   <script>
-    function textChangeListener (evt) {
-      var id = evt.target.id;
-      var text = evt.target.value;
-      
-      if (id == "topLineText") {
-        window.topLineText = text;
-      } else {
-        window.bottomLineText = text;
-      }
-      
-      redrawMeme(window.imageSrc, window.topLineText, window.bottomLineText);
-    }
-    
-    function redrawMeme(image, topLine, bottomLine) {
+    /*var img = new Image();
+    img.src = "img/me.png";
+    img.crossOrigin = "Anonymous";
+    img.onload = function() {
+      draw(this);
+    }*/
+
+    function draw() {
       // Get Canvas2DContext
       var canvas = document.querySelector('canvas');
       var ctx = canvas.getContext("2d");
-      if (image!= null)
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-      
-      //text attributes
-      ctx.font = "36pt Impact";
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center"
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "black";
-      
-      if (topLine != null){
-        ctx.fillText(topLine, canvas.width/2, 40);
-        ctx.strokeText(topLine, canvas.width/2, 40);
-      }
-      if (bottomLine != null){
-      ctx.fillText(bottomLine, canvas.width/2, canvas.height-20);
-      ctx.strokeText(bottomLine, canvas.width/2, canvas.height-20);
-      }
-    }
-    
-    function saveFile() {
-      window.open(document.querySelector('canvas').toDataURL());
-    }
-    
+      ctx.drawImage(img,0,0);
+      img.style.display = "none";
+      var imageData = ctx.getImageData(0,0,canvas.width, canvas.height);
+      var data = imageData.data;
 
-    function handleFileSelect(evt) {
-      var canvasWidth = 500;
-      var canvasHeight = 500;
-      var file = evt.target.files[0];
-      
-      
-      
-      var reader = new FileReader();
-      reader.onload = function(fileObject) {
-        var data = fileObject.target.result;
-        
-        // Create an image object
-        var image = new Image();
-        image.onload = function() {
-          
-          window.imageSrc = this;
-          redrawMeme(window.imageSrc, null, null);
+      var pixelGreen = function(){
+        for (var i = 0; i < data.length; i+=4){
+          data[i] = 0;
+          data[i+1] = 255;
+          data[i+2] = 0;
         }
-        
-        // Set image data to background image.
-        image.src = data;
-        console.log(fileObject.target.result);
+        ctx.putImageData(imageData, 0, 0);
+
       };
-      reader.readAsDataURL(file)
-    }
-    
-    window.topLineText = "";
-    window.bottomLineText = "";
-    var input1 = document.getElementById('topLineText');
-    var input2 = document.getElementById('bottomLineText');
-    input1.oninput = textChangeListener;
-    input2.oninput = textChangeListener;
-    document.getElementById('file').addEventListener('change', handleFileSelect, false);
-    document.querySelector('button').addEventListener('click', saveFile, false);
+
+      canvas.addEventListener('click', pixelGreen);
+    };
+      
   </script>
  
 </body>
